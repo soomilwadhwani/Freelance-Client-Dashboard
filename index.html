@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFlow Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#4f46e5',
+              secondary: '#06b6d4'
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div id="app" class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow hidden md:block">
+        <div class="p-6 text-2xl font-bold text-primary border-b border-gray-200">TaskFlow</div>
+        <nav class="p-4 space-y-2 text-base">
+          <a href="#overview" class="block px-4 py-2 rounded hover:bg-primary hover:text-white transition">📊 Overview</a>
+          <a href="#projects" class="block px-4 py-2 rounded hover:bg-primary hover:text-white transition">📁 Projects</a>
+          <a href="#profile" class="block px-4 py-2 rounded hover:bg-primary hover:text-white transition">👤 Profile</a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow px-6 py-4 flex justify-between items-center sticky top-0 z-10 border-b border-gray-200">
+          <h1 class="text-xl font-semibold">Welcome Back, Freelancer!</h1>
+          <div class="relative">
+            <button onclick="toggleNotifications()" class="relative z-10 focus:outline-none text-xl">🔔</button>
+            <div id="notifications" class="absolute right-0 mt-2 w-72 bg-white border rounded shadow hidden">
+              <div class="p-3 font-semibold border-b">Recent Activities</div>
+              <ul class="p-4 space-y-2 text-sm">
+                <li>✅ Project added: "Landing Page Redesign"</li>
+                <li>💰 Payment received from Client B</li>
+                <li>📆 Task due: Aug 25</li>
+              </ul>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Sections -->
+        <main class="p-6 overflow-y-auto space-y-10">
+          <!-- Overview Section -->
+          <section id="overview">
+            <h2 class="text-2xl font-bold mb-6">📊 Dashboard Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="p-6 bg-white shadow rounded-lg text-center">
+                <p class="text-gray-500">Total Projects</p>
+                <p class="text-2xl font-bold">12</p>
+              </div>
+              <div class="p-6 bg-white shadow rounded-lg text-center">
+                <p class="text-gray-500">Earnings</p>
+                <p class="text-2xl font-bold">$4,000</p>
+              </div>
+              <div class="p-6 bg-white shadow rounded-lg text-center">
+                <p class="text-gray-500">Tasks Due</p>
+                <p class="text-2xl font-bold">5</p>
+              </div>
+            </div>
+            <div class="mt-10">
+              <h3 class="text-xl font-semibold mb-4">📈 Monthly Earnings</h3>
+              <div class="bg-white p-4 rounded shadow">
+                <canvas id="earningsChart"></canvas>
+              </div>
+            </div>
+          </section>
+
+          <!-- Projects Section -->
+          <section id="projects" class="hidden">
+            <h2 class="text-2xl font-bold mb-6">📁 Client Projects</h2>
+            <div class="overflow-x-auto bg-white rounded shadow">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-gray-100 text-left text-gray-700">
+                    <th class="p-4">Project</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4">Deadline</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-gray-50 border-t">
+                    <td class="p-4">Website Redesign</td>
+                    <td class="p-4">In Progress</td>
+                    <td class="p-4">Aug 20</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50 border-t">
+                    <td class="p-4">Mobile App</td>
+                    <td class="p-4">Completed</td>
+                    <td class="p-4">Jul 12</td>
+                  </tr>
+                  <tr class="hover:bg-gray-50 border-t">
+                    <td class="p-4">SEO Audit</td>
+                    <td class="p-4">Pending</td>
+                    <td class="p-4">Sep 01</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Profile Section -->
+          <section id="profile" class="hidden">
+            <h2 class="text-2xl font-bold mb-6">👤 Profile Settings</h2>
+            <form class="space-y-4 max-w-lg bg-white p-6 rounded shadow">
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">Name</label>
+                <input type="text" placeholder="Your Name" class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-primary" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">Email</label>
+                <input type="email" placeholder="you@example.com" class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-primary" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">Password</label>
+                <input type="password" placeholder="••••••••" class="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-primary" />
+              </div>
+              <button type="submit" class="mt-4 bg-primary text-white px-5 py-2 rounded hover:bg-indigo-700">Save Changes</button>
+            </form>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const earningsChart = new Chart(document.getElementById('earningsChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Earnings ($)',
+            data: [500, 700, 800, 1200, 900, 1500],
+            backgroundColor: '#4f46e5'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+
+      function toggleNotifications() {
+        document.getElementById('notifications').classList.toggle('hidden');
+      }
+
+      const navLinks = document.querySelectorAll('aside nav a');
+      const sections = document.querySelectorAll('main section');
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href').substring(1);
+          sections.forEach(sec => sec.classList.add('hidden'));
+          document.getElementById(targetId).classList.remove('hidden');
+        });
+      });
+    </script>
+  </body>
+</html>
